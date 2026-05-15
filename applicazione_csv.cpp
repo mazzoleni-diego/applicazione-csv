@@ -43,15 +43,37 @@ void visualizza_struttura(NumerazioneCivica dati[], int i)
 }
 
 
-void ordina(NumerazioneCivica arr[], int n) 
+void ordina(NumerazioneCivica arr[], int n, string viaScelta)
 {
-    for (int i = 0; i < n - 1; i++) 
+    // array per memorizzare solo la via scleta
+    NumerazioneCivica filtrati[1000];
+    // variabile per filtrare i numeri della via
+    int temp = 0;
+
+    for (int i = 0; i < n; i++) 
+    {
+        if (arr[i].DescrizioneToponimo == viaScelta) 
+        {
+            filtrati[temp] = arr[i];
+            temp++;
+        }
+    }
+
+
+    if (temp == 0) 
+    {
+        cout << "\nNessun civico trovato per la via: " << viaScelta << endl;
+        return;
+    }
+
+    // ordiniamento dei record filtrati 
+    for (int i = 0; i < temp - 1; i++) 
     {
         int indiceMinimo = i;
 
-        for (int j = i + 1; j < n; j++) 
+        for (int j = i + 1; j < temp; j++) 
         {
-            if (arr[j].Numero < arr[indiceMinimo].Numero) 
+            if (stoi(filtrati[j].Numero) < stoi(filtrati[indiceMinimo].Numero)) 
             {
                 indiceMinimo = j;
             }
@@ -59,11 +81,21 @@ void ordina(NumerazioneCivica arr[], int n)
 
         if (indiceMinimo != i) 
         {
-            NumerazioneCivica temp = arr[i];
-            arr[i] = arr[indiceMinimo];
-            arr[indiceMinimo] = temp;
+            NumerazioneCivica Temp = filtrati[i];
+            filtrati[i] = filtrati[indiceMinimo];
+            filtrati[indiceMinimo] = Temp;
         }
     }
+
+    // stampa
+    cout << "\nNumeri civici ordinati per " << viaScelta << ":" << endl;
+    for (int j = 0; j < temp; j++) 
+    {
+        cout << filtrati[j].ClasseToponimo << " " << filtrati[j].DescrizioneToponimo << " N. " << filtrati[j].Numero;
+        if (!filtrati[j].Subalterno.empty()) cout << " / " << filtrati[j].Subalterno;
+        cout << endl;
+    }
+    cout << "Ordinamento completato con successo. Record trovati: " << temp << endl;
 }
 
 void inserisci_struttura(NumerazioneCivica dati[],int &i) 
@@ -112,8 +144,8 @@ void inserisci_struttura(NumerazioneCivica dati[],int &i)
 		    dati[i].Lon = 0;
 		    dati[i].Posto.lon = 0;
 		}
-		
-		        i++;
+				
+    i++;
     }
     fileInput.close();
 }
@@ -123,13 +155,14 @@ int main()
 	int cont = 3;
 	NumerazioneCivica dati[1000];	
 	int i = 0;
+	string viaScelta;
 	
 	do
 	{	
 		cout << "\n0 - Esci"<<endl;
 		cout << "1 - Inserisci dati nella struttura"<<endl;
 		cout << "2 - Visualizzazione"<<endl;
-		cout << "3 - Ordina numeri civici"<<endl;
+		cout << "3 - Ordina numeri civici data una via"<<endl;
 		cout<< "Scegli la funzione:";
 		cin >> cont;
 		
@@ -142,7 +175,13 @@ int main()
 				visualizza_struttura(dati,i);
 				break;	
 			case 3:
-				ordina(dati,i);
+  				cout << "Inserisci il nome della via: ";
+  				cin.ignore();
+				getline(cin,viaScelta);
+				ordina(dati,i,viaScelta);
+				break;
+			case 4:
+				
 				break;
 							
 		}
