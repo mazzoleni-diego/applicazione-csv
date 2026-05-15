@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 using namespace std;
 
 struct location
@@ -22,51 +23,112 @@ struct location
 		location Posto;
 	};  
 
-void visualizza_struttura(NumerazioneCivica dati[]) 
-{
 
+void visualizza_struttura(NumerazioneCivica dati[], int i) 
+{
+    for(int j = 0; j < i; j++)
+    {
+        cout << "--- RECORD " << j + 1 << " ---" << endl;
+        cout << "Toponimo: " << dati[j].ClasseToponimo << " " << dati[j].DescrizioneToponimo << endl;
+        cout << "Numero Civico: " << dati[j].Numero << endl;
+        cout << "Subalterno: " << dati[j].Subalterno << endl;
+        cout << "CAP: " << dati[j].CAP << endl;
+        cout << "Sezione ISTAT: " << dati[j].SezioneISTAT << endl;
+        cout << "Latitudine (diretta): " << dati[j].Lat << endl;
+        cout << "Longitudine (diretta): " << dati[j].Lon << endl;
+        cout << "Posto - Latitudine: " << dati[j].Posto.lat << endl;
+        cout << "Posto - Longitudine: " << dati[j].Posto.lon << endl;
+        cout << "----------------------\n" << endl;
+    }
 }
 
-void lettura_struttura(NumerazioneCivica dati[])
-{
-	    ifstream fileInput("Comune_Bergamo_-_Numerazione_civica.csv"); 
-    string linea;
 
-    if (fileInput.is_open()) 
-	{
-        while (fileInput >> linea)
-		{ 
-        	cout << linea << endl;
-        	i++;
+void ordina(NumerazioneCivica arr[], int n) 
+{
+    for (int i = 0; i < n - 1; i++) 
+    {
+        int indiceMinimo = i;
+
+        for (int j = i + 1; j < n; j++) 
+        {
+            if (arr[j].Numero < arr[indiceMinimo].Numero) 
+            {
+                indiceMinimo = j;
+            }
         }
-        fileInput.close();
-    } else 
-	{
-        cout << "Impossibile aprire il file";
+
+        if (indiceMinimo != i) 
+        {
+            NumerazioneCivica temp = arr[i];
+            arr[i] = arr[indiceMinimo];
+            arr[indiceMinimo] = temp;
+        }
     }
+}
+
+void inserisci_struttura(NumerazioneCivica dati[],int &i) 
+{
+    ifstream fileInput("Comune_Bergamo_-_Numerazione_civica.csv");
+    string linea;
+    
+
+    if (!fileInput.is_open()) 
+	{
+        cout << "Impossibile aprire il file" << endl;
+        return;
+    }
+
+    getline(fileInput, linea);
+
+    while (getline(fileInput, linea) && i < 1000) 
+	{
+        stringstream riga(linea);
+        string temp;
+
+        getline(riga, dati[i].ClasseToponimo, ',');
+        getline(riga, dati[i].DescrizioneToponimo, ',');
+        getline(riga, dati[i].Numero, ',');
+        getline(riga, dati[i].Subalterno, ',');
+        getline(riga, dati[i].CAP, ',');
+        getline(riga, dati[i].SezioneISTAT, ',');
+        getline(riga, temp, ',');
+        dati[i].Lat = dati[i].Posto.lat = (temp != "") ? stod(temp) : 0;
+        
+        getline(riga, temp, ',');
+        dati[i].Lon = dati[i].Posto.lon = (temp != "") ? stod(temp) : 0;
+
+        i++;
+    }
+    fileInput.close();
 }
 
 int main()
 {
 	int cont = 3;
 	NumerazioneCivica dati[1000];	
-
+	int i = 0;
+	
 	do
 	{	
 		cout << "\n0 - Esci"<<endl;
-		cout << "1 - Lettura"<<endl;
+		cout << "1 - Inserisci dati nella struttura"<<endl;
 		cout << "2 - Visualizzazione"<<endl;
-		cout<< "scegli la funzione:";
+		cout << "3 - Ordina numeri civici"<<endl;
+		cout<< "Scegli la funzione:";
 		cin >> cont;
 		
 		switch (cont)
 		{
 			case 1:
-				lettura_struttura(dati);
+				inserisci_struttura(dati,i);
 				break;
 			case 2:
-				visualizza_struttura( dati);
-				break;				
+				visualizza_struttura(dati,i);
+				break;	
+			case 3:
+				ordina(dati,i);
+				break;
+							
 		}
 	}while(cont != 0);
  
