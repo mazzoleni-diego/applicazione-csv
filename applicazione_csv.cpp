@@ -91,13 +91,29 @@ void inserisci_struttura(NumerazioneCivica dati[],int &i)
         getline(riga, dati[i].Subalterno, ',');
         getline(riga, dati[i].CAP, ',');
         getline(riga, dati[i].SezioneISTAT, ',');
-        getline(riga, temp, ',');
-        dati[i].Lat = dati[i].Posto.lat = (temp != "") ? stod(temp) : 0;
-        
-        getline(riga, temp, ',');
-        dati[i].Lon = dati[i].Posto.lon = (temp != "") ? stod(temp) : 0;
-
-        i++;
+		getline(riga, temp, ',');
+		if (temp != "") 
+		{
+		    dati[i].Lat = stod(temp);
+		    dati[i].Posto.lat = stod(temp);
+		} else 
+		{
+		    dati[i].Lat = 0;
+		    dati[i].Posto.lat = 0;
+		}
+		
+		getline(riga, temp, ',');
+		if (temp != "") 
+		{
+		    dati[i].Lon = stod(temp);
+		    dati[i].Posto.lon = stod(temp);
+		} else 
+		{
+		    dati[i].Lon = 0;
+		    dati[i].Posto.lon = 0;
+		}
+		
+		        i++;
     }
     fileInput.close();
 }
