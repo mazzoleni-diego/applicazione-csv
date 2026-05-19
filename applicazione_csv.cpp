@@ -62,7 +62,7 @@ void ordina(NumerazioneCivica arr[], int n, string viaScelta)
 
     if (temp == 0) 
     {
-        cout << "\nNessun civico trovato per la via: " << viaScelta << endl;
+        cout << "\nNessun civico trovato per via " << viaScelta << endl;
         return;
     }
 
@@ -88,7 +88,7 @@ void ordina(NumerazioneCivica arr[], int n, string viaScelta)
     }
 
     // stampa
-    cout << "\nNumeri civici ordinati per " << viaScelta << ":" << endl;
+    cout << "\nNumeri civici ordinati per VIA " << viaScelta << ":" << endl;
     for (int j = 0; j < temp; j++) 
     {
         cout << filtrati[j].ClasseToponimo << " " << filtrati[j].DescrizioneToponimo << " N. " << filtrati[j].Numero;
@@ -96,6 +96,63 @@ void ordina(NumerazioneCivica arr[], int n, string viaScelta)
         cout << endl;
     }
     cout << "Ordinamento completato con successo. Record trovati: " << temp << endl;
+}
+void file_istat(NumerazioneCivica dati[], int n)
+{
+    ofstream outfile("dati_istat.html", ios::out);
+    
+    if (outfile) 
+    {
+        outfile << "<html>\n<body>\n";
+        outfile << "<h2>Report Sezioni ISTAT</h2>\n";
+        outfile << "<table border='1'>\n"; 
+        outfile << "  <tr><th>Sezione ISTAT</th><th>Numero Record</th></tr>\n";
+
+        //prendo i record
+        for (int i = 0; i < n; i++) 
+        {
+            //salta i record vuoti
+            if (dati[i].SezioneISTAT == "") continue;
+
+            //controllo per i duplicati
+            bool doppio = false;
+            for (int k = 0; k < i; k++) 
+            {
+                if (dati[k].SezioneISTAT == dati[i].SezioneISTAT) 
+                {
+                    doppio = true;
+                    break;
+                }
+            }
+
+            if (doppio == false) 
+            {
+                int conteggio = 0;
+                for (int j = 0; j < n; j++) 
+                {
+                    if (dati[j].SezioneISTAT == dati[i].SezioneISTAT) 
+                    {
+                        conteggio++;
+                    }
+                }
+
+                outfile << "  <tr>\n"
+                        << "    <td>" << dati[i].SezioneISTAT << "</td>\n"
+                        << "    <td>" << conteggio << "</td>\n"
+                        << "  </tr>\n";
+            }
+        }
+
+        //chiudo i tag
+        outfile << "</table>\n</body>\n</html>";
+        
+        cout << "\nFile 'dati_istat.html' creato con successo!" << endl;
+        outfile.close();
+    }
+    else 
+    {
+        cout << "Errore nell'apertura del file!" << endl;
+    }
 }
 
 void inserisci_struttura(NumerazioneCivica dati[],int &i) 
@@ -163,6 +220,7 @@ int main()
 		cout << "1 - Inserisci dati nella struttura"<<endl;
 		cout << "2 - Visualizzazione"<<endl;
 		cout << "3 - Ordina numeri civici data una via"<<endl;
+		cout << "4 - Crea file html per ordinare i dati istat"<<endl;
 		cout<< "Scegli la funzione:";
 		cin >> cont;
 		
@@ -181,12 +239,11 @@ int main()
 				ordina(dati,i,viaScelta);
 				break;
 			case 4:
-				
+				file_istat(dati, i);
 				break;
 							
 		}
 	}while(cont != 0);
- 
 
     return 0;
 }
